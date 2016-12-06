@@ -3,7 +3,7 @@
 #include <cstring>
 
 /* GPIO pins used */
-static const uint8_t gpios0 = 2;
+static const uint8_t gpios0 = 14;
 
 PixelBone_Pixel::PixelBone_Pixel(uint16_t pixel_count)
     : pru0(pru_init(0)), num_pixels(pixel_count),

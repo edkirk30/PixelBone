@@ -10,7 +10,7 @@ TARGETS += examples/clear
 TARGETS += examples/game_of_life
 TARGETS += examples/clock
 TARGETS += examples/binary_clock
-TARGETS += examples/test
+#TARGETS += examples/test
 TARGETS += examples/2048
 # TARGETS += examples/fade-test
 # TARGETS += examples/fire
@@ -68,7 +68,7 @@ PASM := $(PASM_DIR)/pasm
 	$(RM) $<.i
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -std=c++11 -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -std=c++0x -c -o $@ $<
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
