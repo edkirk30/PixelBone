@@ -2,6 +2,7 @@
 #
 # The top level targets link in the two .o files for now.
 #
+TARGETS += examples/neopixels_commands
 TARGETS += examples/rgb-test
 TARGETS += examples/matrix-test
 TARGETS += examples/tile-test
