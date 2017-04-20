@@ -11,6 +11,9 @@ g++  -std=c++0x -c -fPIC -o pixel.o pixel.cpp
 g++  -std=c++0x -c -fPIC -o gfx.o gfx.cpp
 g++  -std=c++0x -c -fPIC -o matrix.o matrix.cpp
 
+cc -std=c99 -W -Wall -D_BSD_SOURCE -fPIC -Wp,-MMD,./.pru.o.d -Wp,-MT,pru.o -I. -O2 -mtune=cortex-a8 -march=armv7-a  -I./am335x/app_loader/include -c -o pru.o pru.c
+cc -std=c99 -W -Wall -D_BSD_SOURCE -fPIC -Wp,-MMD,./.util.o.d -Wp,-MT,util.o -I. -O2 -mtune=cortex-a8 -march=armv7-a  -I./am335x/app_loader/include -c -o util.o util.c
+
 g++ -shared -Wl,-soname,libneopixels_commands.so -o libneopixels_commands.so neopixels_commands.o pixel.o gfx.o matrix.o pru.o util.o am335x/app_loader/lib/libprussdrv.so -lpthread  ./am335x/app_loader/lib/libprussdrv.so
 */
 
