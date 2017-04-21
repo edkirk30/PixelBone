@@ -3,9 +3,6 @@
 #include <string>
 #include <vector>
 
-#define PIXELS_PER_LINE 7
-#define PIXELS_ROWS 4
-
 /*
 g++  -std=c++0x -c -fPIC -o neopixels_commands.o neopixels_commands.cpp
 g++  -std=c++0x -c -fPIC -o pixel.o pixel.cpp
@@ -27,15 +24,16 @@ class LedSignalInterface {
     
         PixelBone_Pixel* strip;
 	std::vector<std::vector<unsigned>> rowIndexes;
+	unsigned pixelCount;
 
     public:
         
-        LedSignalInterface(std::vector<std::vector<unsigned>> rowIndexes) : rowIndexes(rowIndexes) {
+        LedSignalInterface(std::vector<std::vector<unsigned>> rowIndexes, unsigned pixelCount) : rowIndexes(rowIndexes), pixelCount(pixelCount) {
 
-            printf("LedSignalInterface");
+            printf("LedSignalInterface \n");
 
-            strip = new PixelBone_Pixel(PIXELS_PER_LINE*
-                                                    PIXELS_ROWS);
+            printf("LedSignalInterface pixelCount:%d\n", pixelCount);
+            strip = new PixelBone_Pixel(pixelCount);
         }
 
         void setRow(int row, char* state) {
@@ -152,20 +150,43 @@ class LedSignalInterface {
 
 extern "C" {
 
-    LedSignalInterface* LedSignalInterface_new(std::vector<std::vector<unsigned>> rowIndexes) {
-        return new LedSignalInterface(rowIndexes);
+    LedSignalInterface* LedSignalInterface_new(int rowIndexesC[][100], unsigned rowsSize, unsigned pixelCount) {
+
+	std::vector<std::vector<unsigned>> rowIndexes;
+
+	printf("length %d \n", rowsSize);
+	for (unsigned i=0; i<rowsSize; i++) {
+
+	    std::vector<unsigned> row;
+
+	    for (unsigned j=0; j<100; j++) {
+
+		printf("index %d \n", rowIndexesC[i][j]);
+
+		if (rowIndexesC[i][j] < 0) {
+		    break;
+		}
+		row.push_back(rowIndexesC[i][j]);
+
+	    }
+		rowIndexes.push_back(row);
+	}
+
+
+        return new LedSignalInterface(rowIndexes, pixelCount);
     }
 
     void LedSignalInterface_setRow(LedSignalInterface* ledSignalInterface,
                                     int row,
                                     char* state) {
+
+	printf("LedSignalInterface_setRow \n");
         ledSignalInterface->setRow(row, state);
     }
 }
 
 
 int main(int argv, char **args) {
-
 
     int row = 0;
     std::string state = "OFF";
@@ -183,7 +204,7 @@ int main(int argv, char **args) {
     rowIndexes.push_back({0, 1});
     rowIndexes.push_back({2, 3});
 
-    LedSignalInterface ledSignalInterface(rowIndexes);
+    LedSignalInterface ledSignalInterface(rowIndexes, 4);
 
     ledSignalInterface.setRow(row, state);
 
