@@ -1,6 +1,7 @@
 #include "./pixel.hpp"
 
 #include <string>
+#include <vector>
 
 #define PIXELS_PER_LINE 7
 #define PIXELS_ROWS 4
@@ -25,16 +26,16 @@ class LedSignalInterface {
     private:
     
         PixelBone_Pixel* strip;
+	std::vector<std::vector<unsigned>> rowIndexes;
 
     public:
         
-        LedSignalInterface() {
+        LedSignalInterface(std::vector<std::vector<unsigned>> rowIndexes) : rowIndexes(rowIndexes) {
 
             printf("LedSignalInterface");
 
             strip = new PixelBone_Pixel(PIXELS_PER_LINE*
                                                     PIXELS_ROWS);
-
         }
 
         void setRow(int row, char* state) {
@@ -48,7 +49,50 @@ class LedSignalInterface {
         void setRow(int row, std::string state) {
 
             printf("setRow");
-        
+ 
+	    if (!(rowIndexes.size() > row)) {
+		printf("error row out of range");
+	    }
+
+	    for (unsigned i=0; i<rowIndexes[row].size(); i++) {
+
+                if (state == "ON_RED") {
+
+                    //printf("ON_RED \n");
+
+                    strip->setPixelColor(rowIndexes[row][i], 255, 0, 0);
+                }
+                else if (state == "ON_GREEN") {
+
+                    //printf("ON_GREEN \n");
+
+                    strip->setPixelColor(rowIndexes[row][i], 0, 255, 0);
+
+                }
+                else if (state == "ON_BLUE") {
+
+                    //printf("ON_BLUE \n");
+
+                    strip->setPixelColor(rowIndexes[row][i], 0, 0, 255);
+
+                }
+                else if (state == "ON_WHITE") {
+
+                    //printf("ON_WHITE \n");
+
+                    strip->setPixelColor(rowIndexes[row][i], 255, 255, 255);
+
+                }
+                else {
+
+                    strip->setPixelColor(rowIndexes[row][i], 0, 0, 0);
+
+                }
+
+	    }
+      
+/*
+ 
             unsigned startPixel = row * PIXELS_PER_LINE;
             unsigned lastPixel = startPixel + PIXELS_PER_LINE;
 
@@ -90,7 +134,7 @@ class LedSignalInterface {
                 }
 
             }
-
+*/
             strip->wait();
             strip->show();
 
@@ -108,8 +152,8 @@ class LedSignalInterface {
 
 extern "C" {
 
-    LedSignalInterface* LedSignalInterface_new() {
-        return new LedSignalInterface();
+    LedSignalInterface* LedSignalInterface_new(std::vector<std::vector<unsigned>> rowIndexes) {
+        return new LedSignalInterface(rowIndexes);
     }
 
     void LedSignalInterface_setRow(LedSignalInterface* ledSignalInterface,
@@ -135,7 +179,11 @@ int main(int argv, char **args) {
 
     }
 
-    LedSignalInterface ledSignalInterface;
+    std::vector<std::vector<unsigned>> rowIndexes;
+    rowIndexes.push_back({0, 1});
+    rowIndexes.push_back({2, 3});
+
+    LedSignalInterface ledSignalInterface(rowIndexes);
 
     ledSignalInterface.setRow(row, state);
 
